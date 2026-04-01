@@ -1,0 +1,48 @@
+{
+  "name": "lesson_05",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "node": "node nodejs-server/server.js",
+    "node:dev": "node --watch nodejs-server/server.js",
+    "express": "node express-server/app.js",
+    "express:dev": "node --watch express-server/app.js",
+    "fastify": "node fastify-server/app.js",
+    "fastify:dev": "node --watch fastify-server/app.js",
+    "nestjs": "tsx --tsconfig nestjs-server/tsconfig.json nestjs-server/src/main.ts",
+    "nestjs:dev": "tsx watch --tsconfig nestjs-server/tsconfig.json nestjs-server/src/main.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@fastify/formbody": "^8.0.2",
+    "@fastify/static": "^9.0.0",
+    "@nestjs/common": "^11.1.17",
+    "@nestjs/core": "^11.1.17",
+    "@nestjs/platform-express": "^11.1.17",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "express": "^5.2.1",
+    "fastify": "^5.8.4",
+    "mime-types": "^3.0.2",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.5.0",
+    "eslint": "^10.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.4.0",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}
