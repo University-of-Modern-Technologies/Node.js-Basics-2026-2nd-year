@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:3000
+
+### Корінь
+GET {{baseUrl}}/
+
+### Усі користувачі
+GET {{baseUrl}}/users
+
+### Існуючий id
+GET {{baseUrl}}/users/1
+
+### Нема користувача (throw NotFoundError → 404)
+GET {{baseUrl}}/users/99
+
+### Невалідний id (throw ValidationError → 400)
+GET {{baseUrl}}/users/abc
+
+### Створити (201)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Тест Тестовий",
+  "email": "test@example.com"
+}
+
+### Валідація POST (400)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Без email"
+}
+
+### Демо: async throw → 500
+GET {{baseUrl}}/demo/async-throw
+
+### Демо: next(err)
+GET {{baseUrl}}/demo/next
+
+### Невідомий шлях (catch-all 404)
+GET {{baseUrl}}/no-such-route

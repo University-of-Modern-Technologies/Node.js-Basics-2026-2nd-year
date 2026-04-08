@@ -1,0 +1,57 @@
+@baseUrl = http://localhost:3000
+
+# ── Основні методи ──────────────────────────────────────────
+
+### GET
+GET {{baseUrl}}/users
+
+### GET з параметром
+GET {{baseUrl}}/users/1
+
+### POST
+POST {{baseUrl}}/users
+
+### PUT
+PUT {{baseUrl}}/users/1
+
+### PATCH
+PATCH {{baseUrl}}/users/1
+
+### DELETE
+DELETE {{baseUrl}}/users/1
+
+
+# ── app.all ──────────────────────────────────────────────────
+
+### GET /ping — матчить app.all
+GET {{baseUrl}}/ping
+
+### POST /ping — той самий обробник
+POST {{baseUrl}}/ping
+
+### DELETE /ping — і цей теж
+DELETE {{baseUrl}}/ping
+
+
+# ── Порядок маршрутів ────────────────────────────────────────
+
+### /accounts/me — специфічний, стоїть вище :id → спрацює правильно
+GET {{baseUrl}}/accounts/me
+
+### /accounts/:id — загальний
+GET {{baseUrl}}/accounts/42
+
+
+# ── Обмеження параметра ──────────────────────────────────────
+
+### Цифровий id → потрапляє в :id(\\d+)
+GET {{baseUrl}}/products/5
+
+### Нечисловий id → пропускає :id(\\d+), йде в наступний :id
+GET {{baseUrl}}/products/abc
+
+
+# ── catch-all ────────────────────────────────────────────────
+
+### Шлях якого немає → catch-all, 404
+GET {{baseUrl}}/no-such-route

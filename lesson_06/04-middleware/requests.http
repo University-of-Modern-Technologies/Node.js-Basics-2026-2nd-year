@@ -1,0 +1,7 @@
+@baseUrl = http://localhost:3000
+
+### Головна (перевірити X-Response-Time у вкладці Headers)
+GET {{baseUrl}}/
+
+### Ping
+GET {{baseUrl}}/ping

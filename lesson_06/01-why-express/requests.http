@@ -1,0 +1,25 @@
+@baseUrl = http://localhost:3000
+
+### Головна
+GET {{baseUrl}}/
+
+### Список користувачів
+GET {{baseUrl}}/users
+
+### Один користувач
+GET {{baseUrl}}/users/1
+
+### Користувач не існує
+GET {{baseUrl}}/users/999
+
+### Створити користувача
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Тест Тестовий",
+  "email": "test@example.com"
+}
+
+### Невідомий шлях
+GET {{baseUrl}}/nope

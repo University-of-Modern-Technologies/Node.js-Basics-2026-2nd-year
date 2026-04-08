@@ -1,0 +1,47 @@
+@baseUrl = http://localhost:3000
+
+### Корінь
+GET {{baseUrl}}/
+
+### Список користувачів
+GET {{baseUrl}}/users
+
+### Один користувач
+GET {{baseUrl}}/users/1
+
+### Не існує (404)
+GET {{baseUrl}}/users/99
+
+### Невалідний id (400)
+GET {{baseUrl}}/users/abc
+
+### Створити
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Дмитро Шевченко",
+  "email": "dmytro@example.com"
+}
+
+### Валідація POST — немає email (400)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Без email"
+}
+
+### Оновити частково
+PATCH {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+  "email": "olena.new@example.com"
+}
+
+### Видалити
+DELETE {{baseUrl}}/users/3
+
+### Невідомий маршрут (404)
+GET {{baseUrl}}/missing

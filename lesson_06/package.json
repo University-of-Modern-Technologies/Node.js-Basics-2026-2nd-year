@@ -1,0 +1,30 @@
+{
+  "name": "lesson_06",
+  "version": "1.0.0",
+  "description": "Лекція: Express.js 5 (ESM), кроки 01–06",
+  "type": "module",
+  "scripts": {
+    "01:vanilla": "node --watch 01-why-express/server-vanilla.js",
+    "01:express": "node --watch 01-why-express/server-express.js",
+    "02": "node --watch 02-routing/app.js",
+    "03": "node --watch 03-request-data/app.js",
+    "04": "node --watch 04-middleware/app.js",
+    "05": "node --watch 05-router/app.js",
+    "06": "node --watch 06-error-handling/app.js",
+    "final": "node --watch final-app/app.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "eslint": "^9.39.0",
+    "globals": "^16.5.0"
+  }
+}

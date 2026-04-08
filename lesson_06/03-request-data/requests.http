@@ -1,0 +1,98 @@
+@baseUrl = http://localhost:3000
+
+# ── req.query ──────────────────────────────────────────────
+
+### Без параметрів — receivedQuery: {}
+GET {{baseUrl}}/users
+
+### Один параметр — рядок
+GET {{baseUrl}}/users?search=Олена
+
+### Регістр не важливий (toLowerCase на сервері)
+GET {{baseUrl}}/users?search=михайло
+
+### Числовий параметр — але у req.query він рядок "2"
+GET {{baseUrl}}/users?limit=2
+
+### Кілька параметрів одночасно
+GET {{baseUrl}}/users?search=а&limit=2
+
+### Однаковий ключ двічі → значення стає масивом
+GET {{baseUrl}}/users?tag=js&tag=node
+
+
+# ── req.params ─────────────────────────────────────────────
+
+### Існуючий id — req.params.id === '1' (рядок!)
+GET {{baseUrl}}/users/1
+
+### Нема такого — 404
+GET {{baseUrl}}/users/999
+
+### Кілька params в одному шляху → req.params = { userId, postId }
+GET {{baseUrl}}/users/1/posts/42
+
+### Обмеження :id(\\d+) — числовий id → req.params.id рядок, але Number() дає число
+GET {{baseUrl}}/products/5
+
+### Обмеження :id(\\d+) — нечисловий → перший роут пропустив, йде в другий
+GET {{baseUrl}}/products/abc
+
+
+# ── req.body ───────────────────────────────────────────────
+
+### POST — тіло парситься завдяки express.json()
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Тест Тестовий",
+  "email": "test@example.com"
+}
+
+### PUT — повна заміна
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+  "name": "Олена Коваль (оновлено)",
+  "email": "olena.new@example.com"
+}
+
+### PATCH — часткове оновлення
+PATCH {{baseUrl}}/users/2
+Content-Type: application/json
+
+{
+  "email": "bondar.new@example.com"
+}
+
+### DELETE
+DELETE {{baseUrl}}/users/3
+
+
+# ── /debug — дивимося все що Express прийняв ───────────────
+
+### GET без query
+GET {{baseUrl}}/debug
+
+### GET з query — числа приходять як рядки, однаковий ключ → масив
+GET {{baseUrl}}/debug?foo=bar&num=42&foo=baz
+
+### POST з body і query одночасно
+POST {{baseUrl}}/debug?action=create
+Content-Type: application/json
+
+{
+  "name": "Тест",
+  "role": "admin"
+}
+
+### PUT з body і query одночасно
+PUT {{baseUrl}}/debug/1?action=update
+Content-Type: application/json
+
+{
+  "name": "Олена (оновлено)",
+  "role": "user"
+}
