@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Крок 4 — fileFilter + limits</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <main class="container" style="max-width: 600px;">
+    <h1>Крок 4 — fileFilter + limits</h1>
+    <p>Тільки зображення (JPEG, PNG, GIF), максимум 2MB.<br>
+    Спробуй завантажити PDF або файл більше 2MB — побачиш multer-помилку.</p>
+    <form action="/filter" method="POST" enctype="multipart/form-data">
+      <label for="image">
+        Оберіть зображення:
+        <input type="file" id="image" name="image" required>
+      </label>
+      <button type="submit">Завантажити</button>
+    </form>
+    <a href="/">← На головну</a>
+  </main>
+</body>
+</html>

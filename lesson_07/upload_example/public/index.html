@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Завантаження файлів — multer</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <main class="container" style="max-width: 700px;">
+    <h1>Завантаження файлів через multer</h1>
+    <p>Кожен крок демонструє окрему концепцію — від найпростішого до повного налаштування.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Крок</th>
+          <th>Що демонструє</th>
+          <th>Ключове</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="/memory">Крок 1 — memoryStorage</a></td>
+          <td>Файл у RAM, на диск не зберігається</td>
+          <td><code>req.file.buffer</code></td>
+        </tr>
+        <tr>
+          <td><a href="/disk">Крок 2 — diskStorage</a></td>
+          <td>Збереження на диск з кастомним іменем</td>
+          <td><code>req.file.filename</code></td>
+        </tr>
+        <tr>
+          <td><a href="/multiple">Крок 3 — upload.array()</a></td>
+          <td>Кілька файлів з одного поля форми</td>
+          <td><code>req.files[]</code></td>
+        </tr>
+        <tr>
+          <td><a href="/fields">Крок 4 — upload.fields()</a></td>
+          <td>Різні поля з файлами в одній формі</td>
+          <td><code>req.files['avatar']</code></td>
+        </tr>
+        <tr>
+          <td><a href="/filter">Крок 5 — fileFilter + limits</a></td>
+          <td>Валідація типу файлу та обмеження розміру</td>
+          <td><code>fileFilter</code>, <code>limits</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

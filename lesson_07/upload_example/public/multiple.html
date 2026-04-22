@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Крок 3 — upload.array()</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <main class="container" style="max-width: 600px;">
+    <h1>Крок 3 — upload.array()</h1>
+    <p>Кілька файлів одночасно (до 5).<br>
+    На сервері: <code>req.files</code> — масив об'єктів замість одного <code>req.file</code>.</p>
+    <form action="/multiple" method="POST" enctype="multipart/form-data">
+      <label for="photos">
+        Оберіть кілька файлів (до 5):
+        <input type="file" id="photos" name="photos" multiple required>
+      </label>
+      <button type="submit">Завантажити</button>
+    </form>
+    <a href="/">← На головну</a>
+  </main>
+</body>
+</html>

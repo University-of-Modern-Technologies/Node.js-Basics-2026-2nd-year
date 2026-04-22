@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Крок 4 — upload.fields()</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <main class="container" style="max-width: 600px;">
+    <h1>Крок 4 — upload.fields()</h1>
+    <p>Кілька різних file-полів в одній формі.<br>
+    На сервері: <code>req.files</code> — об'єкт де ключі — імена полів.</p>
+    <form action="/fields" method="POST" enctype="multipart/form-data">
+      <label for="avatar">
+        Аватар (1 файл):
+        <input type="file" id="avatar" name="avatar">
+      </label>
+      <label for="documents">
+        Документи (до 3):
+        <input type="file" id="documents" name="documents" multiple>
+      </label>
+      <button type="submit">Завантажити</button>
+    </form>
+    <a href="/">← На головну</a>
+  </main>
+</body>
+</html>

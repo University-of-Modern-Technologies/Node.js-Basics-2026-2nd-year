@@ -1,0 +1,38 @@
+<section class="container text-center">
+  <% if (message) { %>
+  <div class="alert alert-success"><%= message %></div>
+  <% } %>
+  <form
+    class="form-signin"
+    id="mail"
+    action="/contact"
+    method="POST"
+    enctype="application/x-www-form-urlencoded"
+    accept-charset="UTF-8"
+  >
+    <h1 class="h3 mb-3 font-weight-normal">Зв'язатися зі мною</h1>
+    <div class="row mb-3">
+      <label>Name</label>
+      <input
+        class="form-control"
+        name="username"
+        type="text"
+        placeholder="Your name"
+        pattern="[^&=]*"
+        title="Заборонені символи & та ="
+      />
+    </div>
+    <div class="row mb-3">
+      <label>Email address</label>
+      <input class="form-control" name="email" type="email" placeholder="Your email" />
+    </div>
+    <div class="row mb-3">
+      <label>Text message</label>
+      <textarea class="form-control" placeholder="Your message" name="text"></textarea>
+    </div>
+    <div class="form__btns form__input-line">
+      <button class="btn btn-primary" type="submit">Submit</button>
+      <button class="btn btn-secondary" type="reset">Reset</button>
+    </div>
+  </form>
+</section>

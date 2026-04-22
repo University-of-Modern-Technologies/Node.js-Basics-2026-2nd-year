@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <main class="container" style="max-width: 600px;">
+    <h1><%= title %></h1>
+
+    <h2>Аватар</h2>
+    <% if (avatar) { %>
+    <table>
+      <tbody>
+        <tr><th>originalname</th><td><%= avatar.originalname %></td></tr>
+        <tr><th>filename</th><td><%= avatar.filename %></td></tr>
+        <tr><th>size</th><td><%= avatar.size %> байт</td></tr>
+      </tbody>
+    </table>
+    <% } else { %>
+    <p>Не завантажено</p>
+    <% } %>
+
+    <h2>Документи (<%= documents.length %>)</h2>
+    <% if (documents.length) { %>
+    <table>
+      <thead>
+        <tr><th>originalname</th><th>filename</th><th>size</th></tr>
+      </thead>
+      <tbody>
+        <% documents.forEach(f => { %>
+        <tr>
+          <td><%= f.originalname %></td>
+          <td><%= f.filename %></td>
+          <td><%= f.size %> байт</td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } else { %>
+    <p>Не завантажено</p>
+    <% } %>
+
+    <a href="<%= back %>">← Назад</a>
+  </main>
+</body>
+</html>

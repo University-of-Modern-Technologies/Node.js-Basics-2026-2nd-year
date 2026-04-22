@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Крок 2 — diskStorage</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+<body>
+  <main class="container" style="max-width: 600px;">
+    <h1>Крок 2 — diskStorage</h1>
+    <p>Файл зберігається у папку <code>uploads/</code> з унікальним іменем.<br>
+    На сервері: <code>req.file.filename</code>, <code>req.file.path</code>.</p>
+    <form action="/disk" method="POST" enctype="multipart/form-data">
+      <label for="file">
+        Оберіть файл:
+        <input type="file" id="file" name="file" required>
+      </label>
+      <button type="submit">Зберегти на диск</button>
+    </form>
+    <a href="/">← На головну</a>
+  </main>
+</body>
+</html>
