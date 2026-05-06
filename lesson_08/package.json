@@ -1,0 +1,40 @@
+{
+  "name": "lesson_08",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "demo:seed": "node examples/01-seed.js",
+    "demo:create": "node examples/02-create.js",
+    "demo:read": "node examples/03-read.js",
+    "demo:update": "node examples/04-update.js",
+    "demo:delete": "node examples/05-delete.js",
+    "demo:tx": "node examples/06-transactions.js",
+    "knex:seed": "node examples-knex/01-seed.js",
+    "knex:create": "node examples-knex/02-create.js",
+    "knex:read": "node examples-knex/03-read.js",
+    "knex:update": "node examples-knex/04-update.js",
+    "knex:delete": "node examples-knex/05-delete.js",
+    "knex:tx": "node examples-knex/06-transactions.js",
+    "knex:migrate": "knex migrate:latest --knexfile examples-knex/knexfile.js",
+    "knex:rollback": "knex migrate:rollback --knexfile examples-knex/knexfile.js",
+    "knex:reset": "knex migrate:rollback --all --knexfile examples-knex/knexfile.js && knex migrate:latest --knexfile examples-knex/knexfile.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "better-sqlite3": "^12.9.0",
+    "dotenv": "^17.4.2",
+    "knex": "^3.2.10"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0"
+  }
+}

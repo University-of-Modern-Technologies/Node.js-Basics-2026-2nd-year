@@ -157,35 +157,27 @@ app.use((err, req, res, next) => {
 
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res
-        .status(400)
-        .render('error', {
-          message: 'Файл занадто великий. Максимум 2MB',
-          back,
-        })
-    }
-    if (err.code === 'LIMIT_FILE_COUNT') {
-      return res
-        .status(400)
-        .render('error', {
-          message: `Занадто багато файлів для поля "${err.field}"`,
-          back,
-        })
-    }
-    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
-      return res
-        .status(400)
-        .render('error', {
-          message: `Перевищено кількість файлів для поля "${err.field}"`,
-          back,
-        })
-    }
-    return res
-      .status(400)
-      .render('error', {
-        message: `Помилка завантаження: ${err.message}`,
+      return res.status(400).render('error', {
+        message: 'Файл занадто великий. Максимум 2MB',
         back,
       })
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      return res.status(400).render('error', {
+        message: `Занадто багато файлів для поля "${err.field}"`,
+        back,
+      })
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).render('error', {
+        message: `Перевищено кількість файлів для поля "${err.field}"`,
+        back,
+      })
+    }
+    return res.status(400).render('error', {
+      message: `Помилка завантаження: ${err.message}`,
+      back,
+    })
   }
 
   if (err instanceof InvalidFileTypeError) {
@@ -197,6 +189,7 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
   console.error('Server error:', err)
+
   res
     .status(500)
     .render('error', { message: 'Внутрішня помилка сервера', back: '/' })

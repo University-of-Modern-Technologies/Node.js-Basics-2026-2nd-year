@@ -1,0 +1,97 @@
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Student {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String
+
+  // Зворотна сторона зв'язку: один студент може мати багато записів на курси.
+  // У таблиці Student цього поля фізично немає; 
+  // Prisma будує його через Enrollment.studentId.
+  enrollments Enrollment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
+}
+
+model Instructor {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  name  String
+
+  // Один викладач може вести багато курсів.
+  // Фізично foreign key лежить у Course.instructorId, 
+  // а це поле дає зручний доступ з боку Instructor.
+  courses Course[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Course {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  // Boolean для реального production-сценарію: 
+  // курс може бути чернеткою або видимим у каталозі.
+  isPublished Boolean @default(false)
+
+  // Foreign key: у таблиці Course зберігається id викладача.
+  instructorId Int
+
+  // Relation field: Prisma розуміє, що instructorId посилається на Instructor.id.
+  // Через це можна писати include: { instructor: true } або connect: { id: ... }.
+  instructor Instructor @relation(fields: [instructorId], references: [id])
+
+  // Зворотна сторона many-to-many: курс має багато Enrollment-записів.
+  // Самі студенти дістаються через enrollment.student.
+  enrollments Enrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // Індекс корисний для запитів типу "усі курси конкретного викладача".
+  @@index([instructorId])
+  // Індекс корисний для каталогу: часто треба вибирати тільки опубліковані курси.
+  @@index([isPublished])
+}
+
+model Enrollment {
+  id Int @id @default(autoincrement())
+
+  // Foreign keys до двох таблиць. Саме вони роблять Enrollment join-таблицею.
+  studentId Int
+  courseId  Int
+
+  // Enum замість String: Prisma дозволить тільки ACTIVE, COMPLETED або CANCELLED.
+  status    EnrollmentStatus @default(ACTIVE)
+  grade     Int?
+  createdAt DateTime         @default(now())
+
+  // Бізнес-дата запису на курс. Вона може відрізнятися від createdAt,
+  // якщо запис імпортували або перенесли з іншої системи.
+  enrolledAt DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  // Enrollment належить одному студенту.
+  // fields показує локальне FK-поле, references показує поле в таблиці Student.
+  // onDelete: Cascade означає: якщо Student видалили, його Enrollment-записи теж видаляться.
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  // Enrollment належить одному курсу.
+  // Разом student + course утворюють many-to-many між Student і Course.
+  // onDelete: Cascade означає: якщо Course видалили, його Enrollment-записи теж видаляться.
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  // Забороняє записати одного студента на той самий курс двічі.
+  // Prisma також створює compound unique key: studentId_courseId.
+  @@unique([studentId, courseId])
+  // Індекс корисний для запитів типу "усі студенти конкретного курсу".
+  @@index([courseId])
+  // Індекс корисний для запитів типу "усі активні записи" або 
+  // "усі завершені записи".
+  @@index([status])
+}
