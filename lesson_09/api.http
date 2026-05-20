@@ -1,0 +1,147 @@
+@baseUrl = http://localhost:3000
+@todosUrl = {{baseUrl}}/api/todos
+@missingTodoId = 999999
+
+### Health check
+GET {{baseUrl}}/
+
+### Get todos: default pagination and sorting
+GET {{todosUrl}}
+
+### Get todos: default pagination and sorting
+GET {{todosUrl}}/300
+
+### Get todos: pagination
+GET {{todosUrl}}?page=1&limit=5
+
+### Get todos: filter completed todos
+GET {{todosUrl}}?completed=true
+
+### Get todos: search by title or description
+GET {{todosUrl}}?search=REST
+
+### Get todos: sort by title ascending
+GET {{todosUrl}}?sortBy=title&sortOrder=asc
+
+### Get todos: combined query
+GET {{todosUrl}}?page=1&limit=10&completed=false&search=REST&sortBy=createdAt&sortOrder=desc
+
+### Create todo
+# @name createTodo
+POST {{todosUrl}}
+Content-Type: application/json
+
+{
+  "title": "REST Client test todo",
+  "description": "Created from api.http",
+  "completed": false
+}
+
+### Get created todo by id
+GET {{todosUrl}}/{{createTodo.response.body.$.id}}
+
+### Update created todo partially
+# @name updateTodo
+PATCH {{todosUrl}}/{{createTodo.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "title": "Updated REST Client test todo",
+  "completed": true
+}
+
+### Get updated todo by id
+GET {{todosUrl}}/{{createTodo.response.body.$.id}}
+
+### Delete created todo
+DELETE {{todosUrl}}/{{createTodo.response.body.$.id}}
+
+### Get deleted todo by id
+GET {{todosUrl}}/{{createTodo.response.body.$.id}}
+
+### Create todo: minimal valid body
+POST {{todosUrl}}
+Content-Type: application/json
+
+{
+  "title": "Minimal todo"
+}
+
+### Validation error: missing title
+POST {{todosUrl}}
+Content-Type: application/json
+
+{
+  "description": "Title is required"
+}
+
+### Validation error: empty title
+POST {{todosUrl}}
+Content-Type: application/json
+
+{
+  "title": ""
+}
+
+### Validation error: title is too long
+POST {{todosUrl}}
+Content-Type: application/json
+
+{
+  "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae ligula non magna cursus suscipit plus extra"
+}
+
+### Validation error: invalid completed type
+POST {{todosUrl}}
+Content-Type: application/json
+
+{
+  "title": "Invalid completed type",
+  "completed": "not-a-boolean"
+}
+
+### Validation error: invalid id
+GET {{todosUrl}}/abc
+
+### Not found error: update missing todo
+PATCH {{todosUrl}}/{{missingTodoId}}
+Content-Type: application/json
+
+{
+  "completed": true
+}
+
+### Not found error: delete missing todo
+DELETE {{todosUrl}}/{{missingTodoId}}
+
+### Validation error: empty patch body
+PATCH {{todosUrl}}/1
+Content-Type: application/json
+
+{}
+
+### Validation error: invalid page
+GET {{todosUrl}}?page=0
+
+### Validation error: invalid limit
+GET {{todosUrl}}?limit=101
+
+### Validation error: invalid completed filter
+GET {{todosUrl}}?completed=maybe
+
+### Validation error: invalid sort field
+GET {{todosUrl}}?sortBy=description
+
+### Validation error: invalid sort order
+GET {{todosUrl}}?sortOrder=random
+
+### Invalid JSON body
+POST {{todosUrl}}
+Content-Type: application/json
+
+{
+  "title": "Broken JSON",
+}
+
+### 404 route
+GET {{baseUrl}}/api/unknown
