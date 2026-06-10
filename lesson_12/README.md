@@ -1,12 +1,12 @@
-# Тема 11. Stateless аутентифікація (JWT + Refresh Tokens)
+# Тема 12. Розширення функціоналу бекенду
 
-Демо для лекції: **Express 5** (ES Modules), **Prisma 7** + SQLite, валідація через **Celebrate (Joi)**, **JWT** access token + **refresh token** з ротацією, документація **OpenAPI / Swagger UI**, централізована обробка помилок (Prisma, `http-errors`, Celebrate).
+Демо для лекції: продовження **Todo API** з JWT (як у `lesson_11`) + production-подібні шари навколо Express: **CORS**, **Helmet**, **rate limiting**, структуроване логування (**Pino**), **health check**, завантаження **аватара** через **Multer** + **Cloudinary**.
 
-Домен — **Todo**: CRUD з прив'язкою до користувача, пагінація, фільтр `completed`, пошук, сортування. Публічних write-операцій немає — створення / оновлення / видалення тільки для авторизованого user.
+Домашня робота №5 будується на цьому коді.
 
 ## Встановлення
 
-З кореня `lesson_11`:
+З кореня `lesson_12`:
 
 ```bash
 npm install
@@ -22,6 +22,14 @@ copy .env.example .env
 
 Обов'язково задай `JWT_SECRET` у `.env` (мінімум 256 біт для HS256).
 
+Для **завантаження аватара** додай у `.env` ключі Cloudinary:
+
+```env
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
+```
+
 Застосуй міграції та згенеруй Prisma Client:
 
 ```bash
@@ -35,48 +43,55 @@ npm run prisma:generate
 npm run dev
 ```
 
-Сервер слушає **порт 3000** (або `PORT` з оточення).
+Сервер слухає **порт 3000** (або `PORT` з оточення).
 
 - Корінь: `GET http://localhost:3000/`
-- Auth: префікс **`/api/auth`**
+- Health: **`GET /api/health`**
+- Auth: префікс **`/api/auth`** (у т. ч. `PATCH /api/auth/avatar`)
 - Todos: префікс **`/api/todos`** (потрібен `Authorization: Bearer <accessToken>`)
 - Документація: **`http://localhost:3000/api-docs`**
 
-## Auth flow
+## Що нового порівняно з lesson_11
+
+| Можливість | Де в коді |
+|------------|-----------|
+| CORS для фронтенду | `app.js` — `credentials: true`, дозволені origin |
+| Заголовки безпеки | `helmet()` у `app.js` |
+| Обмеження частоти запитів | `express-rate-limit` (300 req / 15 хв) |
+| HTTP-логи запитів | `pino-http` + `src/logger.js` |
+| Перевірка стану сервісу | `src/routes/health.js` |
+| Аватар користувача | `PATCH /api/auth/avatar`, `uploadAvatar` middleware, `src/services/cloudinary.js` |
+| Поле `avatar` у `User` | `prisma/schema.prisma`, міграція `add_user_avatar` |
+
+Аватар: `multipart/form-data`, поле `avatar`, до **2 MB**, типи JPEG / PNG / GIF / WebP. Файл у пам'яті (`multer.memoryStorage()`), далі upload у Cloudinary (`folder: avatars`).
+
+## Auth flow (без змін від lesson_11)
 
 | Маршрут | Опис |
 |---------|------|
-| `POST /api/auth/register` | Реєстрація + одразу видача токенів |
+| `POST /api/auth/register` | Реєстрація + видача токенів |
 | `POST /api/auth/login` | Логін |
 | `POST /api/auth/refresh` | Нова пара токенів (ротація refresh) |
 | `POST /api/auth/logout` | Видалення refresh token, `204` |
-
-Access token — **15 хв**, refresh token — **7 днів**. Refresh зберігається в БД; при `/refresh` старий токен видаляється.
-
-Refresh token повертається в тілі відповіді і в **HttpOnly cookie** (`refreshToken`).
+| `PATCH /api/auth/avatar` | Завантаження аватара (потрібен access token) |
 
 ## Ручне тестування
 
-У корені — **`api.http`**: auth flow + todos з `@accessToken`.
+У корені — **`api.http`**: health, auth flow, upload аватара, todos з `@accessToken`.
 
 ## Структура проєкту
 
 | Шлях | Призначення |
 |------|-------------|
-| `app.js` | Точка входу: JSON, cookies, маршрути, Swagger, Celebrate / http-errors |
-| `src/routes/auth.js` | Маршрути auth + Swagger |
-| `src/routes/todos.routers.js` | Маршрути todos + Swagger |
-| `src/controllers/auth.js` | register, login, refresh, logout |
-| `src/controllers/todos.controller.js` | CRUD todos, ownership check |
+| `app.js` | CORS, Helmet, rate limit, Pino, маршрути, Swagger, помилки Multer / Prisma |
+| `src/logger.js` | Конфіг Pino (`pino-pretty` у dev) |
+| `src/routes/health.js` | `GET /api/health` |
+| `src/routes/auth.js` | Auth + `PATCH /avatar` |
+| `src/middleware/uploadAvatar.js` | Multer: memory, ліміт розміру, фільтр MIME |
+| `src/services/cloudinary.js` | Upload stream у Cloudinary |
+| `src/controllers/auth.js` | register, login, refresh, logout, `updateAvatar` |
 | `src/middleware/authenticate.js` | Перевірка JWT access token |
-| `src/services/auth.js` | `createTokens`, `setRefreshTokenCookie` |
-| `src/constants/time.js` | Час життя access / refresh token |
-| `src/validators/auth.js` | Валідація register / login |
-| `src/validators/todos.validator.js` | Валідація todos |
-| `prisma/schema.prisma` | `User`, `RefreshToken`, `Todo` |
-| `prisma/migrations/` | Міграції БД |
-| `generated/prisma/` | Prisma Client |
-| `nodemon.json` | Watch лише `app.js` і `src/` |
+| `prisma/schema.prisma` | `User.avatar`, `RefreshToken`, `Todo` |
 
 ## Скрипти `package.json`
 

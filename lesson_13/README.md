@@ -1,12 +1,12 @@
-# Тема 11. Stateless аутентифікація (JWT + Refresh Tokens)
+# Тема 13. Тестування Node.js застосунків
 
-Демо для лекції: **Express 5** (ES Modules), **Prisma 7** + SQLite, валідація через **Celebrate (Joi)**, **JWT** access token + **refresh token** з ротацією, документація **OpenAPI / Swagger UI**, централізована обробка помилок (Prisma, `http-errors`, Celebrate).
+Демо для лекції: той самий **Todo API**, що в `lesson_12`, але з повним набором **автотестів** — **Vitest** + **Supertest**. Окрема тестова БД (`test.db`), мок Cloudinary, integration- і unit-тести.
 
-Домен — **Todo**: CRUD з прив'язкою до користувача, пагінація, фільтр `completed`, пошук, сортування. Публічних write-операцій немає — створення / оновлення / видалення тільки для авторизованого user.
+`app.js` експортує Express-додаток без `listen`; точка входу для dev — **`index.js`**.
 
 ## Встановлення
 
-З кореня `lesson_11`:
+З кореня `lesson_13`:
 
 ```bash
 npm install
@@ -20,68 +20,112 @@ copy .env.example .env
 
 (у Git Bash / macOS / Linux: `cp .env.example .env`.)
 
-Обов'язково задай `JWT_SECRET` у `.env` (мінімум 256 біт для HS256).
+Для локального запуску сервера задай `JWT_SECRET` (і за потреби Cloudinary — як у `lesson_12`).
 
-Застосуй міграції та згенеруй Prisma Client:
+Міграції для **розробки**:
 
 ```bash
 npm run prisma:migrate
 npm run prisma:generate
 ```
 
-## Запуск
+Тести самі піднімають схему в `test.db` через `prisma migrate deploy` у `tests/setup/globalSetup.js`.
+
+## Запуск сервера
 
 ```bash
 npm run dev
 ```
 
-Сервер слушає **порт 3000** (або `PORT` з оточення).
+або
 
-- Корінь: `GET http://localhost:3000/`
-- Auth: префікс **`/api/auth`**
-- Todos: префікс **`/api/todos`** (потрібен `Authorization: Bearer <accessToken>`)
-- Документація: **`http://localhost:3000/api-docs`**
+```bash
+npm start
+```
 
-## Auth flow
+Сервер слухає **порт 3000**. Документація: **`http://localhost:3000/api-docs`**.
 
-| Маршрут | Опис |
-|---------|------|
-| `POST /api/auth/register` | Реєстрація + одразу видача токенів |
-| `POST /api/auth/login` | Логін |
-| `POST /api/auth/refresh` | Нова пара токенів (ротація refresh) |
-| `POST /api/auth/logout` | Видалення refresh token, `204` |
+## Запуск тестів
 
-Access token — **15 хв**, refresh token — **7 днів**. Refresh зберігається в БД; при `/refresh` старий токен видаляється.
+```bash
+npm test
+```
 
-Refresh token повертається в тілі відповіді і в **HttpOnly cookie** (`refreshToken`).
+Інтерактивний режим:
 
-## Ручне тестування
+```bash
+npm run test:watch
+```
 
-У корені — **`api.http`**: auth flow + todos з `@accessToken`.
+Звіт покриття (v8):
 
-## Структура проєкту
+```bash
+npm run test:coverage
+```
+
+Окремо накотити міграції на тестову БД (зазвичай не потрібно — робить `globalSetup`):
+
+```bash
+npm run test:db:migrate
+```
+
+## Що покривають тести
+
+### Integration (`tests/integration/`)
+
+| Файл | Що перевіряє |
+|------|----------------|
+| `auth/register.test.js` | Реєстрація, дублікати, валідація |
+| `auth/login.test.js` | Логін, невірні credentials |
+| `auth/tokens.test.js` | refresh / logout |
+| `auth/avatar.test.js` | `PATCH /api/auth/avatar` |
+| `todos/crud.test.js` | CRUD todos під авторизацією |
+| `todos/list.test.js` | Пагінація, фільтри, сортування |
+| `todos/authorization.test.js` | Доступ лише до своїх todos |
+
+Запити через **Supertest** і хелпер `tests/helpers/api.js` (`api(token).get/post/patch/delete`).
+
+### Unit (`tests/unit/`)
+
+| Файл | Що перевіряє |
+|------|----------------|
+| `services/cloudinary.test.js` | `uploadAvatar` без реального API (мок `cloudinary`) |
+
+## Налаштування Vitest
+
+`vitest.config.js`:
+
+- окремі **projects**: `integration` і `unit`;
+- integration — **послідовно** (`fileParallelism: false`, `maxWorkers: 1`), щоб не ганяти SQLite паралельно;
+- `DATABASE_URL=file:./test.db`, `LOG_LEVEL=silent` у тестовому оточенні;
+- у `tests/setup/setup.js` — очищення таблиць перед кожним тестом, мок `cloudinary.js`;
+- coverage: `app.js`, `src/**`, без `src/routes/**`.
+
+## Структура `tests/`
 
 | Шлях | Призначення |
 |------|-------------|
-| `app.js` | Точка входу: JSON, cookies, маршрути, Swagger, Celebrate / http-errors |
-| `src/routes/auth.js` | Маршрути auth + Swagger |
-| `src/routes/todos.routers.js` | Маршрути todos + Swagger |
-| `src/controllers/auth.js` | register, login, refresh, logout |
-| `src/controllers/todos.controller.js` | CRUD todos, ownership check |
-| `src/middleware/authenticate.js` | Перевірка JWT access token |
-| `src/services/auth.js` | `createTokens`, `setRefreshTokenCookie` |
-| `src/constants/time.js` | Час життя access / refresh token |
-| `src/validators/auth.js` | Валідація register / login |
-| `src/validators/todos.validator.js` | Валідація todos |
-| `prisma/schema.prisma` | `User`, `RefreshToken`, `Todo` |
-| `prisma/migrations/` | Міграції БД |
-| `generated/prisma/` | Prisma Client |
-| `nodemon.json` | Watch лише `app.js` і `src/` |
+| `tests/helpers/api.js` | Supertest-обгортка з Bearer token |
+| `tests/helpers/auth.js` | Хелпери для токенів |
+| `tests/helpers/validation.js` | Перевірка тіл помилок Celebrate |
+| `tests/fixtures/users.js` | Тестові дані користувачів |
+| `tests/fixtures/todos.js` | Тестові todos |
+| `tests/setup/globalSetup.js` | `prisma migrate deploy` на `test.db` |
+| `tests/setup/setup.js` | `beforeEach` cleanup + мок Cloudinary |
+
+## Ручне тестування API
+
+У корені — **`api.http`** (як у попередніх уроках).
 
 ## Скрипти `package.json`
 
 | Скрипт | Дія |
 |--------|-----|
-| `npm run dev` | `nodemon app.js` |
+| `npm run dev` | `nodemon index.js` |
+| `npm start` | `node index.js` |
+| `npm test` | `vitest run` |
+| `npm run test:watch` | `vitest` |
+| `npm run test:coverage` | `vitest run --coverage` |
+| `npm run test:db:migrate` | міграції на `test.db` |
 | `npm run prisma:generate` | `prisma generate` |
-| `npm run prisma:migrate` | `prisma migrate dev` |
+| `npm run prisma:migrate` | `prisma migrate dev` (dev.db) |
