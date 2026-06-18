@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Chat</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="login" class="login">
+      <h1>WebSocket Chat</h1>
+      <form id="nameForm" class="login-form">
+        <input
+          id="nameInput"
+          type="text"
+          placeholder="Введіть ім'я"
+          autocomplete="off"
+          required
+        />
+        <button type="submit">Увійти</button>
+      </form>
+      <p id="loginError" class="login-error hidden"></p>
+    </div>
+
+    <div id="chat" class="app hidden">
+      <main class="main">
+        <aside class="sidebar">
+          <h2>Користувачі</h2>
+          <ul id="usersList"></ul>
+        </aside>
+
+        <section class="chat-panel">
+          <div id="messages" class="messages"></div>
+
+          <form id="messageForm" class="message-form">
+            <input
+              id="messageInput"
+              type="text"
+              placeholder="Повідомлення..."
+              autocomplete="off"
+              required
+            />
+            <button type="submit">Надіслати</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
